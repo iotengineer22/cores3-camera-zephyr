@@ -1,0 +1,70 @@
+# ==========================================
+# Zephyr RTOS Build Artifacts
+# ==========================================
+build/
+**/build/
+zephyr/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+*.ninja
+*.ninja_deps
+*.ninja_log
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.obj
+*.a
+
+# ==========================================
+# Python & Environment
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+
+# ==========================================
+# Editors & IDEs
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.bak
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# Temporary & Scratch Files
+# ==========================================
+*.tmp
+*.log
+scratch_*
+
+# ==========================================
+# Local Documents & Presentation Files
+# ==========================================
+*.pptx
+*.pdf
+cores3_dvp_camera_interface.pptx
+cores3_sch.pdf
+

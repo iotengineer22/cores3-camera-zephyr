@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2026
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/pinctrl/esp32s3-pinctrl.h>
+
+/ {
+	chosen {
+		zephyr,camera = &lcd_cam_dvp;
+		zephyr,display = &ili9342c;
+	};
+};
+
+&pinctrl {
+	lcd_cam_default: lcd_cam_default {
+		group1 {
+			pinmux = <LCD_CAM_V_SYNC_CAM_GPIO46>,
+				 <LCD_CAM_H_ENABLE_CAM_GPIO38>,
+				 <LCD_CAM_CAM_PCLK_GPIO45>,
+				 <LCD_CAM_DATA_IN0_GPIO39>,
+				 <LCD_CAM_DATA_IN1_GPIO40>,
+				 <LCD_CAM_DATA_IN2_GPIO41>,
+				 <LCD_CAM_DATA_IN3_GPIO42>,
+				 <LCD_CAM_DATA_IN4_GPIO15>,
+				 <LCD_CAM_DATA_IN5_GPIO16>,
+				 <LCD_CAM_DATA_IN6_GPIO48>,
+				 <LCD_CAM_DATA_IN7_GPIO47>;
+			input-enable;
+			bias-disable;
+		};
+	};
+};
+
+&i2c0 {
+	gc0308: gc0308@21 {
+		compatible = "galaxycore,gc0308";
+		reg = <0x21>;
+		status = "okay";
+		reset-gpios = <&aw9523b_gpio 8 GPIO_ACTIVE_LOW>;
+
+		port {
+			gc0308_ep_out: endpoint {
+				remote-endpoint = <&dvp_ep_in>;
+			};
+		};
+	};
+};
+
+&avdd {
+	regulator-boot-on;
+	regulator-always-on;
+};
+
+&dvdd {
+	regulator-boot-on;
+	regulator-always-on;
+};
+
+&vcc_bl {
+	regulator-boot-on;
+	regulator-always-on;
+};
+
+&dma {
+	status = "okay";
+};
+
+&lcd_cam {
+	status = "okay";
+	pinctrl-0 = <&lcd_cam_default>;
+	pinctrl-names = "default";
+};
+
+&lcd_cam_dvp {
+	status = "okay";
+	cam-clk = <20000000>;
+	source = <&gc0308>;
+
+	port {
+		dvp_ep_in: endpoint {
+			remote-endpoint = <&gc0308_ep_out>;
+		};
+	};
+};
+
+&spi2 {
+	clock-frequency = <40000000>;
+};
+
+&ili9342c {
+	mipi-max-frequency = <40000000>;
+};

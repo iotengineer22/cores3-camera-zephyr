@@ -1,0 +1,5 @@
+$ErrorActionPreference = "Stop"
+& "$env:USERPROFILE\zephyrproject\.venv\Scripts\Activate.ps1"
+$env:ZEPHYR_BASE = "$env:USERPROFILE\zephyrproject\zephyr"
+Set-Location "X:\src\camera_connect"
+west -z "$env:ZEPHYR_BASE" build -p always -b m5stack_cores3/esp32s3/procpu -d "X:\src\camera_connect\build" "X:\src\camera_connect"
