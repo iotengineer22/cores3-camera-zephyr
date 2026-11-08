@@ -150,10 +150,10 @@ int blazeface_detector_run(const uint16_t *frame_rgb565,
             uint8_t g = (uint8_t)((((b0 & 0x07) << 3) | ((b1 >> 5) & 0x07)) * 255 / 63);
             uint8_t b = (uint8_t)((b1 & 0x1F) * 255 / 31);
 
-            // Normalize to [-1.0, 1.0]
-            dst_line[dx * 3 + 0] = ((float)r / 127.5f) - 1.0f;
-            dst_line[dx * 3 + 1] = ((float)g / 127.5f) - 1.0f;
-            dst_line[dx * 3 + 2] = ((float)b / 127.5f) - 1.0f;
+            // Normalize to [0.0, 1.0] matching INT8 Quantization (scale = 1/255, zp = -128)
+            dst_line[dx * 3 + 0] = (float)r / 255.0f;
+            dst_line[dx * 3 + 1] = (float)g / 255.0f;
+            dst_line[dx * 3 + 2] = (float)b / 255.0f;
         }
     }
 
@@ -273,6 +273,10 @@ int blazeface_detector_run(const uint16_t *frame_rgb565,
         int sy1 = (int)(c->y1 * 240.0f);
         int sx2 = 40 + (int)(c->x2 * 240.0f);
         int sy2 = (int)(c->y2 * 240.0f);
+
+        // Ensure correct coordinate ordering
+        if (sx1 > sx2) { int tmp = sx1; sx1 = sx2; sx2 = tmp; }
+        if (sy1 > sy2) { int tmp = sy1; sy1 = sy2; sy2 = tmp; }
 
         // Clamping to screen boundaries [0..319, 0..239]
         if (sx1 < 0) sx1 = 0;
