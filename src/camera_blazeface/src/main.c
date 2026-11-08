@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "blazeface_detector.h"
+#include "zephyr_logo.h"
 
 LOG_MODULE_REGISTER(camera_blazeface, LOG_LEVEL_INF);
 
@@ -96,6 +97,46 @@ static void draw_box(uint16_t *buf, int x1, int y1, int x2, int y2, uint16_t col
 		}
 		if (right >= 0) {
 			for (int y = y1; y <= y2; y++) buf[y * LCD_WIDTH + right] = color;
+		}
+	}
+}
+
+static void draw_zephyr_logo(uint16_t *frame_pixels, int start_x, int start_y)
+{
+	for (int y = 0; y < ZEPHYR_LOGO_H; y++) {
+		int py = start_y + y;
+		if (py < 0 || py >= LCD_HEIGHT) continue;
+
+		for (int x = 0; x < ZEPHYR_LOGO_W; x++) {
+			int px = start_x + x;
+			if (px < 0 || px >= LCD_WIDTH) continue;
+
+			const zephyr_logo_pixel_t *lp = &g_zephyr_logo[y * ZEPHYR_LOGO_W + x];
+			if (lp->a == 0) continue; /* Fully transparent */
+
+			uint8_t *p = (uint8_t *)&frame_pixels[py * LCD_WIDTH + px];
+			uint8_t b0 = p[0];
+			uint8_t b1 = p[1];
+
+			/* Extract camera RGB (0..255) */
+			uint32_t cam_r = ((b0 >> 3) & 0x1F) * 255 / 31;
+			uint32_t cam_g = (((b0 & 0x07) << 3) | ((b1 >> 5) & 0x07)) * 255 / 63;
+			uint32_t cam_b = (b1 & 0x1F) * 255 / 31;
+
+			/* Alpha blend */
+			uint32_t a = lp->a;
+			uint32_t inv_a = 255 - a;
+			uint32_t out_r = (lp->r * a + cam_r * inv_a) / 255;
+			uint32_t out_g = (lp->g * a + cam_g * inv_a) / 255;
+			uint32_t out_b = (lp->b * a + cam_b * inv_a) / 255;
+
+			/* Repack into RGB565 byte-swapped format */
+			uint32_t r5 = (out_r * 31 + 127) / 255;
+			uint32_t g6 = (out_g * 63 + 127) / 255;
+			uint32_t b5 = (out_b * 31 + 127) / 255;
+
+			p[0] = ((r5 & 0x1F) << 3) | ((g6 >> 3) & 0x07);
+			p[1] = ((g6 & 0x07) << 5) | (b5 & 0x1F);
 		}
 	}
 }
@@ -239,6 +280,9 @@ int main(void)
 		}
 		uint32_t infer_ms = s_last_infer_time_ms;
 		k_mutex_unlock(&s_box_mutex);
+
+		/* Overlay Zephyr Kite Logo in top-right corner */
+		draw_zephyr_logo(frame_pixels, LCD_WIDTH - ZEPHYR_LOGO_W - 8, 8);
 
 		/* Render frame onto ILI9342C display */
 		struct display_buffer_descriptor desc = {
