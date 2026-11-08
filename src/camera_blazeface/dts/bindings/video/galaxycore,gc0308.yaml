@@ -1,0 +1,21 @@
+# Copyright (c) 2026
+# SPDX-License-Identifier: Apache-2.0
+
+description: GalaxyCore GC0308 CMOS video sensor
+
+compatible: "galaxycore,gc0308"
+
+include: i2c-device.yaml
+
+properties:
+  reset-gpios:
+    type: phandle-array
+    description: |
+      The RESET pin is asserted to reset the sensor.
+      Active low.
+
+  pwdn-gpios:
+    type: phandle-array
+    description: |
+      The PWDN pin is asserted to power down the sensor.
+      Active high.

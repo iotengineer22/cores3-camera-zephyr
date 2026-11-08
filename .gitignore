@@ -58,7 +58,9 @@ $RECYCLE.BIN/
 # ==========================================
 *.tmp
 *.log
+scratch/
 scratch_*
+src/camera_yoloface/
 
 # ==========================================
 # Local Documents & Presentation Files

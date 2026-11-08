@@ -1,0 +1,23 @@
+
+set(COMPONENT_ADD_INCLUDEDIRS ./include/)
+set(COMPONENT_SRCS "src/test_utils.c"
+                   "src/alignment_test.c"
+                   "src/basic_math_test.c"
+                   "src/convolution_test.c"
+                   "src/fully_connected_test.c"
+                   "src/pooling_test.c"
+                   "src/relu_test.c"
+                   "src/softmax_test.c"
+                   "src/hard_swish_test.c"
+                   "src/mean_test.c"
+                   "src/multicore_test.c")
+
+set(COMPONENT_REQUIRES )
+set(COMPONENT_PRIV_REQUIRES esp-nn)
+
+register_component()
+
+target_include_directories(${COMPONENT_LIB} PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/../src/fully_connected")
+
+target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-unused-function)

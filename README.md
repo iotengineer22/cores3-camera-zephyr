@@ -43,12 +43,22 @@ cores3_camera/
     │   ├── drivers/video/              # GC0308 Zephyr video driver
     │   ├── src/main.c                  # I2C probe & Chip ID verification app
     │   └── README.md
-    └── camera_display/                 # Phase 2: Live LCD Camera Preview Viewer (Main App)
+    ├── camera_display/                 # Phase 2: Live LCD Camera Preview Viewer (Main App)
         ├── CMakeLists.txt
         ├── prj.conf                    # Double-buffering & boot delay configuration
         ├── boards/                     # Devicetree overlay (40MHz SPI + DVP)
         ├── drivers/video/              # GC0308 driver with 320x240 Crop Window Mode
         ├── src/main.c                  # Zero-PSRAM Double-Buffer LCD Viewer
+        └── README.md
+    └── camera_blazeface/               # Phase 3: Real-Time AI Face Detection (BlazeFace + TFLM)
+        ├── CMakeLists.txt
+        ├── prj.conf                    # C++, Octal PSRAM, DVP & SPI configuration
+        ├── tflm.cmake                  # TFLM Operator configuration
+        ├── boards/                     # Devicetree overlay
+        ├── drivers/video/              # GC0308 camera driver
+        ├── src/ai/                     # BlazeFace detector, model weights, SSD anchors
+        ├── src/tflm_libs/              # TFLM core and reference kernels
+        ├── src/main.c                  # Dual-thread async AI preview pipeline
         └── README.md
 ```
 
@@ -219,16 +229,30 @@ Open your serial terminal (MobaXterm or Tera Term) at **115200 bps** on `COM9`. 
 
 ---
 
+## Phase 3: Real-Time AI Face Detection (BlazeFace INT8 + ESP-NN SIMD)
+
+In `src/camera_blazeface`, we provide a fully integrated on-device face detector leveraging Google MediaPipe's **BlazeFace INT8** neural network and accelerated via Espressif's **ESP-NN** Xtensa PIE SIMD vector library:
+
+- **AI Inference Latency**: **1,126 ms** (~1.1 s) per inference (a **20.0x acceleration** compared to TFLM reference C++ loops at 22,544 ms).
+- **Smooth Live Preview**: Sustained **~6.6 FPS** live 320x240 RGB565 preview with zero tearing.
+- **Visual Feedback**: Real-time green bounding box (`COLOR_GREEN = 0xE007`, 3-pixel border) drawn over detected faces.
+- **Memory Optimized**: 1 MB TFLM Tensor Arena placed in 8MB Quad PSRAM (`.ext_ram.bss`), keeping internal SRAM usage clean at only **69.8%** (~120 KB free).
+
+See [`src/camera_blazeface/README.md`](src/camera_blazeface/README.md) for architecture details, benchmark tables, and build instructions.
+
+---
+
 ## Performance Summary Table
 
 | Metric | Real-World Value | Engineering Note |
 | :--- | :---: | :--- |
 | **Preview Resolution** | **320 x 240** | RGB565 (16 bits/pixel, 153,600 bytes/frame) |
-| **Sustained Frame Rate** | **~13.4 FPS** | Zero dropped frames, zero DMA underflows |
+| **Display Preview Rate** | **~13.4 FPS** (camera_display)<br/>**~6.6 FPS** (camera_blazeface) | Zero dropped frames, zero DMA underflows |
+| **AI Inference Latency** | **1,126 ms** | Accelerated with ESP-NN Xtensa PIE SIMD (20x faster) |
 | **Display SPI Clock** | **40 MHz** | 51 ms full-screen transfer time |
 | **Camera PCLK** | **~10 MHz** | ~98 ms frame interval (~10.2 FPS raw) |
-| **Internal DRAM0 Used** | **393.1 KB / 399.1 KB** | **98.50%** — Fits inside internal SRAM |
-| **External PSRAM** | **0 KB** | Zero PSRAM dependency, no bus contention |
+| **Internal DRAM0 Used** | **278.6 KB / 399.1 KB** | **69.83%** (BlazeFace) — Leaves ~120 KB free SRAM |
+| **External Quad PSRAM** | **2,646 KB / 32 MB** | **8.07%** — Houses 1MB TFLM Arena & AI snapshot frame |
 
 ---
 
