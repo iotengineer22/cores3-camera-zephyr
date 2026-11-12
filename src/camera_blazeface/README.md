@@ -2,7 +2,7 @@
 
 This project implements real-time on-device face detection on the **M5Stack CoreS3** (ESP32-S3) running **Zephyr RTOS v4.4.99**, powered by **TensorFlow Lite for Microcontrollers (TFLM)**, **Google MediaPipe BlazeFace INT8**, and hardware-accelerated by **Espressif ESP-NN (Xtensa PIE SIMD Vector Instructions)**.
 
-[![Real-Time AI Face Detection on CoreS3](../../img/cores3_blazeface_demo.png)](https://youtu.be/vcJoFc5fCvE)
+[![Real-Time AI Face Detection on CoreS3](../../img/IMG_20261109_193356.jpg)](https://youtu.be/vcJoFc5fCvE)
 
 📺 **YouTube Demo Video**: [https://youtu.be/vcJoFc5fCvE](https://youtu.be/vcJoFc5fCvE)
 

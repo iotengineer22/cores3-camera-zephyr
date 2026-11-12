@@ -16,7 +16,7 @@ Featuring a **Zero-PSRAM double-buffering DMA architecture**, this project achie
 ## Live Demonstration
 
 ### 1. Real-Time AI Face Detection (Phase 3: BlazeFace + ESP-NN SIMD)
-[![Real-Time AI Face Detection on CoreS3](img/cores3_blazeface_demo.png)](https://youtu.be/vcJoFc5fCvE)
+[![Real-Time AI Face Detection on CoreS3](img/IMG_20261109_193356.jpg)](https://youtu.be/vcJoFc5fCvE)
 
 📺 **Watch the Face Detection Demo on YouTube**: [https://youtu.be/vcJoFc5fCvE](https://youtu.be/vcJoFc5fCvE)  
 *Demonstrates real-time on-device face detection on M5Stack CoreS3 running Zephyr RTOS with BlazeFace INT8 (TFLM + ESP-NN Xtensa PIE SIMD acceleration), green bounding box tracking, and the Zephyr RTOS kite logo overlay.*
