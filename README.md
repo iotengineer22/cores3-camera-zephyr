@@ -15,9 +15,14 @@ Featuring a **Zero-PSRAM double-buffering DMA architecture**, this project achie
 
 ## Live Demonstration
 
+### 1. Real-Time AI Face Detection (Phase 3: BlazeFace + ESP-NN SIMD)
+📺 **Watch the Face Detection Demo on YouTube**: [https://youtu.be/vcJoFc5fCvE](https://youtu.be/vcJoFc5fCvE)  
+*Demonstrates real-time on-device face detection on M5Stack CoreS3 running Zephyr RTOS with BlazeFace INT8 (TFLM + ESP-NN Xtensa PIE SIMD acceleration), green bounding box tracking, and the Zephyr RTOS kite logo overlay.*
+
+### 2. Real-Time Camera LCD Preview (Phase 2: Zero-PSRAM Double-Buffering)
 [![Real-Time Camera Display on CoreS3](img/cores3_demo_2.png)](https://youtu.be/SE-EuWjXOFA)
 
-📺 **Watch the video demonstration on YouTube**: [https://youtu.be/SE-EuWjXOFA](https://youtu.be/SE-EuWjXOFA)  
+📺 **Watch the Camera Preview Demo on YouTube**: [https://youtu.be/SE-EuWjXOFA](https://youtu.be/SE-EuWjXOFA)  
 *Demonstrates physical hardware reboot, 3000ms delayed boot banner capture, sensor probe verification, and continuous ~13.4 FPS live LCD preview streaming without tearing.*
 
 
@@ -230,6 +235,8 @@ Open your serial terminal (MobaXterm or Tera Term) at **115200 bps** on `COM9`. 
 ---
 
 ## Phase 3: Real-Time AI Face Detection (BlazeFace INT8 + ESP-NN SIMD)
+
+📺 **YouTube Demo Video**: [https://youtu.be/vcJoFc5fCvE](https://youtu.be/vcJoFc5fCvE)
 
 In `src/camera_blazeface`, we provide a fully integrated on-device face detector leveraging Google MediaPipe's **BlazeFace INT8** neural network and accelerated via Espressif's **ESP-NN** Xtensa PIE SIMD vector library:
 
