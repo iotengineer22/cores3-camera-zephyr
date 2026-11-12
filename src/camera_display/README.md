@@ -143,21 +143,26 @@ rtc_reserved_seg:           0 B         24 B      0.00%
 ## Build & Flash Instructions
 
 ### 1. Environment Setup
-Activate the Zephyr virtual environment:
+Activate your Zephyr virtual environment and ensure `ZEPHYR_BASE` is configured:
 ```powershell
-cd $env:USERPROFILE
-.\zephyrproject\.venv\Scripts\Activate.ps1
+# Windows (PowerShell)
+~\zephyrproject\.venv\Scripts\Activate.ps1
+
+# Linux / macOS
+# source ~/zephyrproject/.venv/bin/activate
 ```
 
 ### 2. Build the Application
-```powershell
-west build -p auto -b m5stack_cores3/esp32s3/procpu C:\Users\ioten\OneDrive\デスクトップ\OSSJ2026\cores3_camera\src\camera_display -d C:\Users\ioten\OneDrive\デスクトップ\OSSJ2026\cores3_camera\src\camera_display\build
+Navigate to the `src/camera_display` directory inside the cloned repository and run `west build`:
+```bash
+cd <path-to-repo>/cores3_camera/src/camera_display
+west build -p auto -b m5stack_cores3/esp32s3/procpu
 ```
 
 ### 3. Flash to M5Stack CoreS3
-Connect M5Stack CoreS3 via USB-C (COM9) and run:
-```powershell
-west flash -d C:\Users\ioten\OneDrive\デスクトップ\OSSJ2026\cores3_camera\src\camera_display\build --esp-device COM9 --esp-baud-rate 921600
+Connect M5Stack CoreS3 via USB-C and flash to your serial port (replace `<PORT>` with your actual port, e.g. `COMx` on Windows or `/dev/ttyACMx` on Linux):
+```bash
+west flash --esp-device <PORT> --esp-baud-rate 921600
 ```
 
 ---
@@ -165,26 +170,26 @@ west flash -d C:\Users\ioten\OneDrive\デスクトップ\OSSJ2026\cores3_camera\
 ## Serial Console Monitoring & Boot Log Capture
 
 ### USB-Serial/JTAG Architecture & Boot Delay (`CONFIG_BOOT_DELAY=3000`)
-- **Challenge**: The M5Stack CoreS3 connects to the host PC via the ESP32-S3's internal native **USB-Serial/JTAG** peripheral. When the board is physically rebooted (via power/reset button), the USB bus resets and is temporarily disconnected from the host. Windows takes approximately **1.0 to 1.5 seconds** to re-enumerate the device and restore `COM9`. Because the ESP32-S3 boots into Zephyr in under 300 ms, early boot logs and the Zephyr version banner would normally be missed.
-- **Solution**: Enabled `CONFIG_BOOT_DELAY=3000` in [`prj.conf`](file:///C:/Users/ioten/OneDrive/デスクトップ/OSSJ2026/cores3_camera/src/camera_display/prj.conf) to hold kernel boot banner output for **3 seconds**, providing a comfortable window for the host terminal to reconnect.
+- **Challenge**: The M5Stack CoreS3 connects to the host PC via the ESP32-S3's internal native **USB-Serial/JTAG** peripheral. When the board is physically rebooted (via power/reset button), the USB bus resets and is temporarily disconnected from the host. The OS takes approximately **1.0 to 1.5 seconds** to re-enumerate the device and restore the serial port (`COMx` / `/dev/ttyACMx`). Because the ESP32-S3 boots into Zephyr in under 300 ms, early boot logs and the Zephyr version banner would normally be missed.
+- **Solution**: Enabled `CONFIG_BOOT_DELAY=3000` in [`prj.conf`](prj.conf) to hold kernel boot banner output for **3 seconds**, providing a comfortable window for the host terminal to reconnect.
 
 ### How to Capture Initial Boot Logs
 
 #### Option A: MobaXterm (Recommended)
-1. Open a **Serial** session on `COM9` at **115200 bps** (8-N-1, flow control: none).
+1. Open a **Serial** session on your CoreS3 serial port (e.g., `COMx`) at **115200 bps** (8-N-1, flow control: none).
 2. Press the CoreS3 reset button (short press on power button).
-3. The session will pause with `Session stopped`. Wait ~1 second (until USB re-enumeration sound), then press **`R`** or **`Enter`** to resume.
+3. The session will pause with `Session stopped`. Wait ~1 second (until USB re-enumeration), then press **`R`** or **`Enter`** to resume.
 4. Thanks to the 3-second boot delay, you will capture the entire boot sequence starting from the Zephyr version banner!
 
 #### Option B: Tera Term (v4.x / v5.x)
 1. Press the CoreS3 reset button.
-2. Once Windows re-detects `COM9` (~1 second), connect Tera Term to `COM9` (115200 bps) via **File -> New connection**.
+2. Once Windows re-detects the serial port (~1 second), connect Tera Term to `<PORT>` (115200 bps) via **File -> New connection**.
 3. The connection completes well within the 3-second delay window, displaying all initialization messages.
 
 #### Option C: Python Miniterm (Zero-Disconnect DTR/RTS Reset)
 To reset without physically touching buttons or dropping the terminal window:
-```powershell
-python -m serial.tools.miniterm COM9 115200
+```bash
+python -m serial.tools.miniterm <PORT> 115200
 ```
 - Press **`Ctrl + T`** followed by **`Ctrl + R`** to toggle RTS (hardware reset pin).
 - The board resets immediately, and all ROM bootloader and Zephyr logs appear in the window without disconnection.
@@ -263,7 +268,7 @@ I (spi_flash): flash io: dio
 
 ## License
 
-This project is licensed under the **Apache License, Version 2.0**. See the [LICENSE](file:///C:/Users/ioten/OneDrive/デスクトップ/OSSJ2026/cores3_camera/LICENSE) file for the full license text.
+This project is licensed under the **Apache License, Version 2.0**. See the [LICENSE](../../LICENSE) file for the full license text.
 
 
 
